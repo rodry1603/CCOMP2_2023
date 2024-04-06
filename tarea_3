@@ -1,0 +1,204 @@
+#include <iostream>
+using namespace std;
+
+void swapIntPointer(int*& ptr, int& value) {
+    int temp = *ptr;
+    *ptr = value;
+    value = temp;
+}
+
+struct arrNode {
+    int data[10];
+    int nelem = 0;
+    arrNode* next = nullptr;
+};
+
+
+class elementor {
+private:
+    arrNode* ini;
+public:
+    elementor() : ini(nullptr) {}
+    void add(int n);
+    bool find(int n, arrNode*& Node_pos, int& elem_pos);
+    void del(int n);
+    void print();
+    void move_Forward(int n, arrNode* Node_pos, int& elem_pos);
+    ~elementor();
+};
+
+void elementor::print() {
+    arrNode* printer = ini;
+    for (; printer; printer = printer->next) {
+        cout << "[ ";
+        for (int i = 0; i < printer->nelem; ++i) {
+            cout << printer->data[i] << ",";
+        }
+        cout << "]\t";
+    }
+    cout << endl;
+}
+
+void elementor::add(int n) {
+    arrNode* tmp = ini;
+    arrNode*& Node_pos = ini;
+    int elem_pos;
+    if (find(n, Node_pos, elem_pos)) return;
+    if (!Node_pos) {
+        Node_pos = new arrNode;
+        Node_pos->data[0] = n;
+        Node_pos->nelem++;
+        return;
+    }
+    move_Forward(n, Node_pos, elem_pos);
+    ini = tmp;
+
+}
+
+void elementor::move_Forward(int n, arrNode* Node_pos, int& elem_pos) { //mueve todo hacia adelante
+    int aux; //ayuda con la variable que va a ser reemplazada
+    int i;
+    arrNode* current = Node_pos;
+    int current_size = current->nelem;
+    //aux = 16
+    //[1,2,3,4,5,6,7,18,19,20]  [21,23,35,42]
+    aux = current->data[elem_pos]; // guardo el elemento
+    current->data[elem_pos] = n; // chanco en la posici�n indicada
+
+    if (Node_pos->nelem == 1) {
+        current->data[elem_pos + 1] = aux;
+    }
+    else {
+        for (i = elem_pos + 1; i <= current_size; ++i) {
+            if (i == 10) {
+                if (!current->next) {
+                    current->next = new arrNode;
+                }
+                current = current->next;
+                i = 0;
+                current_size = current->nelem;
+            }
+            swap(aux, current->data[i]);
+
+        }
+    }
+
+    current->nelem++;
+    print();
+}
+
+bool elementor::find(int n, arrNode*& Node_pos, int& elem_pos) {
+    arrNode* tmp = ini;
+    int i;
+    int node_number = 0;
+    while (tmp != nullptr) { //mientras haya nodos por recorrer
+        for (i = 0; n > tmp->data[i] && i < tmp->nelem; ++i);
+        elem_pos = i;
+
+        if (n == tmp->data[i]) return true; //encontr� el elemento
+
+        if (i == 10) { //Debe avanzar al siguiente nodo
+            tmp = tmp->next;
+            node_number++;
+        }
+        else {
+            //cout << n << " --- chancando \n";
+            //cout << endl << n << " should be Inserted in (node, pos): " << node_number << " -- " << elem_pos << endl;
+            Node_pos = tmp;
+            return false;
+        }
+    }
+    Node_pos = tmp;
+    return false;
+}
+
+
+
+void elementor::del(int n) {
+    arrNode* tmp = ini;
+    arrNode*& Node_pos = ini;
+    int elem_pos;
+    if (!find(n, Node_pos, elem_pos)) return;
+    ini = tmp;
+    if (Node_pos->nelem == 1) {
+        delete Node_pos;
+        Node_pos = nullptr;
+        return;
+    }
+    if (elem_pos == 0) {
+        Node_pos = Node_pos->next;
+        delete tmp;
+        return;
+
+    }
+    arrNode* current = Node_pos;
+    int current_size = current->nelem;
+    for (int i = elem_pos; i < current_size; ++i) {
+        if (i == 10) {
+            if (!current->next) {
+                current->next = new arrNode;
+            }
+            current = current->next;
+            i = 0;
+            current_size = current->nelem;
+
+
+        }
+
+        swap(current->data[i], current->data[i + 1]);
+
+    }
+    current->nelem--;
+    print();
+}
+
+elementor::~elementor() {
+    arrNode* tmp = ini;
+    arrNode* current = ini;
+    while (current) {
+        tmp = current;
+        current = current->next;
+        delete tmp;
+    }
+
+}
+int main() {
+    elementor e;
+    e.add(3);
+    e.add(5);
+    e.del(3);
+
+    e.add(2);
+    e.add(1);
+    e.add(7);
+    e.add(6);
+    e.add(4);
+    e.add(9);
+    e.add(8);
+    e.add(10);
+    e.add(11);
+    e.add(12);
+    e.add(13);
+    e.add(30);
+    e.del(13);
+    e.add(50);
+    e.add(15);
+    e.add(17);
+    e.add(300);
+    e.del(17);
+    e.del(50);
+    e.del(300);
+
+
+
+
+    cout << endl;
+
+    e.print();
+
+
+
+
+
+
+}
