@@ -1,0 +1,71 @@
+#include <iostream>
+using namespace std;
+
+struct nodo{
+  int valor;
+  nodo *next;
+};
+
+class cola_array{
+  public:
+  nodo *head=nullptr;
+  nodo *tail=nullptr;
+  bool push (int n);
+  bool pop (int &n);
+  void print();
+};
+
+bool cola_array::push(int n){
+  nodo *nuevo_nodo=new nodo();
+  nuevo_nodo->valor=n;
+  nuevo_nodo->next=nullptr;
+  if(head == nullptr && tail==nullptr){
+    head=nuevo_nodo;
+    tail=nuevo_nodo;
+  }else{
+    tail->next=nuevo_nodo;
+    tail=nuevo_nodo;
+  }
+  return true;
+}
+
+bool cola_array::pop(int &n){
+  if(head==nullptr){
+    return false;
+  }
+  n=head->valor;
+  if(head==tail){
+    head=nullptr;
+    tail=nullptr;
+  }else{
+    head=head->next;
+  }
+  return true;
+}
+
+void cola_array::print(){
+  nodo* p=head;
+  if(p==nullptr){
+    cout<<"La cola esta vacia"<<endl;
+  }
+  while(p!=nullptr){
+    cout<<p->valor<<"->";
+    p=p->next;
+  }
+  cout<<"NULL"<<endl;
+}
+
+int main(){
+  cola_array b;
+  for(int i=0;i<10;i++){
+    b.push(i);
+  }
+  
+  b.print();
+  int x;
+  b.pop(x);
+  b.pop(x);
+  b.pop(x);
+  
+  b.print();
+}
